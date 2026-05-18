@@ -1,0 +1,35 @@
+{
+  "name": "aha-protocol",
+  "version": "0.3.0",
+  "description": "Agent-Human-Agent Protocol — envelope types and validators",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "v0.3.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --experimental-strip-types src/*.test.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Data-Downs/aha-protocol.git"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
