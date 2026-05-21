@@ -1,18 +1,23 @@
 {
   "name": "aha-protocol",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Agent-Human-Agent Protocol — envelope types and validators",
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "files": [
-    "src",
-    "v0.3.md"
+    "dist",
+    "v0.4.md"
   ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/rewrite-dts-extensions.mjs",
+    "prepare": "tsc -p tsconfig.build.json && node scripts/rewrite-dts-extensions.mjs",
     "typecheck": "tsc --noEmit",
     "test": "node --test --experimental-strip-types src/*.test.ts"
   },

@@ -19,8 +19,8 @@ const baseEnvelope = {
   content: { calendar_density_delta: 0.4 },
 };
 
-test("PROTOCOL_VERSION pins v0.3", () => {
-  assert.equal(PROTOCOL_VERSION, "0.3");
+test("PROTOCOL_VERSION pins v0.4", () => {
+  assert.equal(PROTOCOL_VERSION, "0.4");
 });
 
 test("valid observation parses", () => {
@@ -51,8 +51,35 @@ test("unknown intent rejected", () => {
 });
 
 test("unknown domain rejected", () => {
-  const result = Domain.safeParse("training");
+  const result = Domain.safeParse("physical");
   assert.equal(result.success, false);
+});
+
+test("v0.4 domain split: training, embodiment, personal_financial accepted", () => {
+  assert.equal(Domain.safeParse("training").success, true);
+  assert.equal(Domain.safeParse("embodiment").success, true);
+  assert.equal(Domain.safeParse("personal_financial").success, true);
+});
+
+test("counter_hypothesis intent accepted", () => {
+  assert.equal(Intent.safeParse("counter_hypothesis").success, true);
+});
+
+test("via field accepted on envelope", () => {
+  const routed = {
+    ...baseEnvelope,
+    id: "01HXYZ0000000000000000000B",
+    from: "matt",
+    to: ["chris"],
+    via: "chrisonomous",
+    intent: "counter_hypothesis" as const,
+    domain: "training" as const,
+    in_reply_to: "01HXYZ0000000000000000000A",
+    human_readable: "Disagree: training load was within bounds for this week.",
+  };
+  const parsed = Envelope.parse(routed);
+  assert.equal(parsed.via, "chrisonomous");
+  assert.equal(parsed.intent, "counter_hypothesis");
 });
 
 test("numeric confidence in 0..1 accepted", () => {

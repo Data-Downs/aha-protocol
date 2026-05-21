@@ -16,14 +16,16 @@ export const Intent = z.enum([
   "acknowledgement",
   "experiment",
   "note",
+  "counter_hypothesis",
 ]);
 export type Intent = z.infer<typeof Intent>;
 
 export const Domain = z.enum([
-  "physical",
+  "training",
+  "embodiment",
   "business",
+  "personal_financial",
   "career",
-  "financial",
   "relational",
   "spiritual",
   "meta",
@@ -62,6 +64,7 @@ export const Envelope = z
     id: z.string().min(1),
     from: z.string().min(1),
     to: z.array(z.string().min(1)).min(1),
+    via: z.string().min(1).optional(),
     cohort_id: z.string().min(1),
     scope: Scope,
     in_reply_to: z.string().min(1).nullable(),
@@ -85,4 +88,4 @@ export const Envelope = z
   );
 export type Envelope = z.infer<typeof Envelope>;
 
-export const PROTOCOL_VERSION = "0.3" as const;
+export const PROTOCOL_VERSION = "0.4" as const;
