@@ -24,7 +24,8 @@ export const Domain = z.enum([
   "training",
   "embodiment",
   "business",
-  "personal_financial",
+  "personal_admin",
+  "financial_wellbeing",
   "career",
   "relational",
   "spiritual",
@@ -88,4 +89,4 @@ export const Envelope = z
   );
 export type Envelope = z.infer<typeof Envelope>;
 
-export const PROTOCOL_VERSION = "0.4" as const;
+export const PROTOCOL_VERSION = "0.5" as const;

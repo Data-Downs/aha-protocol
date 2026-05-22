@@ -19,8 +19,8 @@ const baseEnvelope = {
   content: { calendar_density_delta: 0.4 },
 };
 
-test("PROTOCOL_VERSION pins v0.4", () => {
-  assert.equal(PROTOCOL_VERSION, "0.4");
+test("PROTOCOL_VERSION pins v0.5", () => {
+  assert.equal(PROTOCOL_VERSION, "0.5");
 });
 
 test("valid observation parses", () => {
@@ -55,10 +55,15 @@ test("unknown domain rejected", () => {
   assert.equal(result.success, false);
 });
 
-test("v0.4 domain split: training, embodiment, personal_financial accepted", () => {
+test("v0.5 domain split: training, embodiment, personal_admin, financial_wellbeing accepted", () => {
   assert.equal(Domain.safeParse("training").success, true);
   assert.equal(Domain.safeParse("embodiment").success, true);
-  assert.equal(Domain.safeParse("personal_financial").success, true);
+  assert.equal(Domain.safeParse("personal_admin").success, true);
+  assert.equal(Domain.safeParse("financial_wellbeing").success, true);
+});
+
+test("v0.5 retires personal_financial", () => {
+  assert.equal(Domain.safeParse("personal_financial").success, false);
 });
 
 test("counter_hypothesis intent accepted", () => {
