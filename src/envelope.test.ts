@@ -19,8 +19,32 @@ const baseEnvelope = {
   content: { calendar_density_delta: 0.4 },
 };
 
-test("PROTOCOL_VERSION pins v0.5", () => {
-  assert.equal(PROTOCOL_VERSION, "0.5");
+test("PROTOCOL_VERSION pins v0.6", () => {
+  assert.equal(PROTOCOL_VERSION, "0.6");
+});
+
+test("v0.6 optional fields accepted: experiment_id and protocol", () => {
+  const tagged = {
+    ...baseEnvelope,
+    id: "01HXYZ0000000000000000000C",
+    intent: "experiment" as const,
+    experiment_id: "exp-2026-06-sleep-window",
+    protocol: "0.6",
+  };
+  const parsed = Envelope.parse(tagged);
+  assert.equal(parsed.experiment_id, "exp-2026-06-sleep-window");
+  assert.equal(parsed.protocol, "0.6");
+});
+
+test("v0.5 envelopes parse unchanged under v0.6 (no experiment_id/protocol)", () => {
+  const parsed = Envelope.parse(baseEnvelope);
+  assert.equal(parsed.experiment_id, undefined);
+  assert.equal(parsed.protocol, undefined);
+});
+
+test("empty experiment_id rejected", () => {
+  const bad = { ...baseEnvelope, experiment_id: "" };
+  assert.equal(Envelope.safeParse(bad).success, false);
 });
 
 test("valid observation parses", () => {

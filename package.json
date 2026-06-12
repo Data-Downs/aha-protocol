@@ -1,7 +1,7 @@
 {
   "name": "aha-protocol",
-  "version": "0.5.1",
-  "description": "Agent-Human-Agent Protocol — envelope types and validators",
+  "version": "0.6.0",
+  "description": "Agent-Human-Agent Protocol \u2014 envelope types and validators",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
   },
   "files": [
     "dist",
-    "v0.5.md"
+    "v0.6.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/rewrite-dts-extensions.mjs",

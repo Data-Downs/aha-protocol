@@ -77,6 +77,11 @@ export const Envelope = z
     confidence: Confidence.optional(),
     tentativeness: Tentativeness,
     expires_at: z.string().datetime({ offset: true }).nullable().optional(),
+    // Frozen as a federation-relevant field since v0.4; absent from the
+    // validator until v0.6 (spec/validator drift, now closed).
+    experiment_id: z.string().min(1).optional(),
+    // Sender's protocol version; absence means a pre-0.6 sender.
+    protocol: z.string().min(1).optional(),
     human_readable: z.string().min(1),
     content: z.unknown().optional(),
   })
@@ -89,4 +94,4 @@ export const Envelope = z
   );
 export type Envelope = z.infer<typeof Envelope>;
 
-export const PROTOCOL_VERSION = "0.5" as const;
+export const PROTOCOL_VERSION = "0.6" as const;
