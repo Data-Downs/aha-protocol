@@ -10,6 +10,12 @@ export {
   Tentativeness,
 } from "./envelope.ts";
 export {
+  ALL_DOMAINS,
+  buildRegistry,
+  CHRIS_COHORT_REGISTRY,
+  type AgentDomains,
+} from "./registry.ts";
+export {
   verifyEnvelope,
   type CohortRegistry,
   type ProvenanceResolver,
