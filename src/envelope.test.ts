@@ -19,8 +19,18 @@ const baseEnvelope = {
   content: { calendar_density_delta: 0.4 },
 };
 
-test("PROTOCOL_VERSION pins v0.6", () => {
-  assert.equal(PROTOCOL_VERSION, "0.6");
+test("PROTOCOL_VERSION pins v0.7", () => {
+  assert.equal(PROTOCOL_VERSION, "0.7");
+});
+
+test("2026-08 amendment: knowledge domain accepted", () => {
+  const parsed = Envelope.parse({
+    ...baseEnvelope,
+    id: "01HXYZ0000000000000000000K",
+    from: "will",
+    domain: "knowledge" as const,
+  });
+  assert.equal(parsed.domain, "knowledge");
 });
 
 test("v0.6 optional fields accepted: experiment_id and protocol", () => {

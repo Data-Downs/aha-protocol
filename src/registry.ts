@@ -59,4 +59,5 @@ export const CHRIS_COHORT_REGISTRY: CohortRegistry = buildRegistry([
   { name: "vincent", domains: ["business"] },
   { name: "alex", domains: ["personal_admin"] },
   { name: "ruth", domains: ["financial_wellbeing"] },
+  { name: "will", domains: ["knowledge"] },
 ]);

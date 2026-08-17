@@ -89,3 +89,7 @@ test("embodiment is deliberately co-owned", () => {
   assert.ok(CHRIS_COHORT_REGISTRY.primary.matt?.includes("embodiment"));
   assert.ok(CHRIS_COHORT_REGISTRY.primary.chrisonomous?.includes("embodiment"));
 });
+
+test("will owns knowledge, and only knowledge", () => {
+  assert.deepEqual(CHRIS_COHORT_REGISTRY.primary.will, ["knowledge"]);
+});

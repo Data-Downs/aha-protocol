@@ -29,6 +29,7 @@ export const Domain = z.enum([
   "career",
   "relational",
   "spiritual",
+  "knowledge",
   "meta",
 ]);
 export type Domain = z.infer<typeof Domain>;
@@ -94,4 +95,4 @@ export const Envelope = z
   );
 export type Envelope = z.infer<typeof Envelope>;
 
-export const PROTOCOL_VERSION = "0.6" as const;
+export const PROTOCOL_VERSION = "0.7" as const;
