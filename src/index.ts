@@ -8,6 +8,7 @@ export {
   Provenance,
   Scope,
   Tentativeness,
+  WitnessContent,
 } from "./envelope.ts";
 export {
   ALL_DOMAINS,

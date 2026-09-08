@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { Envelope, Intent, Domain, PROTOCOL_VERSION } from "./envelope.ts";
+import { Envelope, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
 
 const baseEnvelope = {
   id: "01HXYZ0000000000000000000A",
@@ -19,8 +19,33 @@ const baseEnvelope = {
   content: { calendar_density_delta: 0.4 },
 };
 
-test("PROTOCOL_VERSION pins v0.7", () => {
-  assert.equal(PROTOCOL_VERSION, "0.7");
+test("PROTOCOL_VERSION pins v0.8", () => {
+  assert.equal(PROTOCOL_VERSION, "0.8");
+});
+
+test("2026-09 amendment: witness intent accepted, content typed", () => {
+  const content = {
+    statement: "The 2024-25 Self Assessment return has been filed.",
+    user_message: "My self assessment 2024/25 has been filed. It was done some time ago!",
+    heard_by: "alex",
+    heard_at: "2026-08-29T18:27:12Z",
+    conversation_id: "conv-1",
+  };
+  const parsed = Envelope.parse({
+    ...baseEnvelope,
+    id: "01HXYZ0000000000000000000W",
+    from: "alex",
+    to: ["vincent"],
+    intent: "witness",
+    authority: "relayed",
+    provenance: [{ source: "chris:chat", message_id: "conv-1" }],
+    confidence: "high",
+    human_readable: "Chris told Alex at 18:27 on Saturday 29 August 2026: \"My self assessment 2024/25 has been filed.\"",
+    content,
+  });
+  assert.equal(parsed.intent, "witness");
+  assert.deepEqual(WitnessContent.parse(parsed.content), content);
+  assert.throws(() => WitnessContent.parse({ statement: "x" }));
 });
 
 test("2026-08 amendment: knowledge domain accepted", () => {

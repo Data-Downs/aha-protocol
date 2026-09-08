@@ -17,6 +17,7 @@ export const Intent = z.enum([
   "experiment",
   "note",
   "counter_hypothesis",
+  "witness",
 ]);
 export type Intent = z.infer<typeof Intent>;
 
@@ -95,4 +96,20 @@ export const Envelope = z
   );
 export type Envelope = z.infer<typeof Envelope>;
 
-export const PROTOCOL_VERSION = "0.7" as const;
+export const PROTOCOL_VERSION = "0.8" as const;
+
+/**
+ * `content` of a `witness` envelope (amendment 2026-09): the human's word
+ * passing through a hearing agent to the owner of the domain it concerns.
+ * `statement` is the fact as the hearer understood it; `user_message` is what
+ * the human actually typed, verbatim, so the owner reconciles against his
+ * words and not the hearer's paraphrase.
+ */
+export const WitnessContent = z.object({
+  statement: z.string().min(1),
+  user_message: z.string().min(1),
+  heard_by: z.string().min(1),
+  heard_at: z.string().datetime({ offset: true }),
+  conversation_id: z.string().min(1).optional(),
+});
+export type WitnessContent = z.infer<typeof WitnessContent>;
