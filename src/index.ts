@@ -17,6 +17,14 @@ export {
   type AgentDomains,
 } from "./registry.ts";
 export {
+  FOUNDER_HUMAN,
+  humanise,
+  humaniseTool,
+  parsePronouns,
+  type Human,
+  type Pronouns,
+} from "./human.ts";
+export {
   verifyEnvelope,
   type CohortRegistry,
   type ProvenanceResolver,
