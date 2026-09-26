@@ -105,11 +105,23 @@ export const PROTOCOL_VERSION = "0.8" as const;
  * the human actually typed, verbatim, so the owner reconciles against his
  * words and not the hearer's paraphrase.
  */
+/** A proposed meeting time, as an outsider offered it (stage 7). */
+export const ProposedTime = z.object({
+  start: z.string().datetime({ offset: true }),
+  end: z.string().datetime({ offset: true }),
+});
+export type ProposedTime = z.infer<typeof ProposedTime>;
+
 export const WitnessContent = z.object({
   statement: z.string().min(1),
   user_message: z.string().min(1),
   heard_by: z.string().min(1),
   heard_at: z.string().datetime({ offset: true }),
   conversation_id: z.string().min(1).optional(),
+  /** Typed word for the day's owner, handled in code on receipt: times
+   *  someone proposed, to hold; or the one the person chose, so the other
+   *  holds are released. `who` names the other party, for the hold's title. */
+  proposed_times: z.object({ who: z.string().min(1), times: z.array(ProposedTime).min(1).max(8) }).optional(),
+  chosen_time: z.object({ who: z.string().min(1), start: z.string().datetime({ offset: true }) }).optional(),
 });
 export type WitnessContent = z.infer<typeof WitnessContent>;

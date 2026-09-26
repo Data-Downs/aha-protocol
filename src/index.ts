@@ -33,3 +33,4 @@ export {
   type VerifyOptions,
 } from "./verify.ts";
 export { findReproach, findHeldOver } from "./voice.ts";
+export * from "./frames.js";
