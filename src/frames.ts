@@ -78,6 +78,9 @@ export type ActBody =
   | { type: "item"; name: string; price: string; merchant: string; reason: string; url: string }
   | { type: "times"; who: string; times: { start: string; end: string }[] }
   | { type: "table"; columns: string[]; rows: string[][] }
+  /** A bill, a renewal or a move between the person's own pots: the amount
+   *  rendered, the day named (acting.md stage 4). */
+  | { type: "bill"; payee: string; amount: string; due: string; cadence?: string; last_paid?: string; note?: string }
   /** An invoice as the books will hold it: amounts already rendered, never
    *  for a model to add up (acting.md stage 3). */
   | {

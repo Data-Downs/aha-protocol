@@ -1,6 +1,6 @@
 {
   "name": "aha-protocol",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Agent-Human-Agent Protocol \u2014 envelope types and validators",
   "type": "module",
   "main": "dist/index.js",
