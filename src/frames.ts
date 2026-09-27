@@ -77,7 +77,20 @@ export type ActBody =
   | { type: "clip"; title: string; domain: string; sentence: string; url: string; date?: string }
   | { type: "item"; name: string; price: string; merchant: string; reason: string; url: string }
   | { type: "times"; who: string; times: { start: string; end: string }[] }
-  | { type: "table"; columns: string[]; rows: string[][] };
+  | { type: "table"; columns: string[]; rows: string[][] }
+  /** An invoice as the books will hold it: amounts already rendered, never
+   *  for a model to add up (acting.md stage 3). */
+  | {
+      type: "invoice";
+      contact: string;
+      lines: { description: string; quantity: number; unit_amount: string; amount: string }[];
+      subtotal: string;
+      /** What the books add on top: "VAT as your Xero defaults apply", or none. */
+      tax_note: string;
+      currency: string;
+      due: string;
+      reference?: string;
+    };
 
 export interface ActAction {
   label: string;
