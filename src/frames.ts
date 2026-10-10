@@ -148,7 +148,42 @@ export function actShape(frame: ActFrame): string | null {
   return null;
 }
 
-export type TurnFrame = { kind: "choices"; frame: ChoicesFrame } | { kind: "act"; frame: ActFrame };
+/** A card beside a reply (aha-cohort/briefs/objects.md): something the
+ *  reply named, drawn from a row the turn read. Every string is rendered in
+ *  code; the model never writes a frame. `day` is the day key a tap opens. */
+export type ReplyObject =
+  | { kind: "event"; ref?: { calendar_id: string; event_id: string }; title: string; when: string; day: string; all_day: boolean }
+  | {
+      kind: "travel";
+      ref?: { calendar_id: string; event_id: string };
+      title: string;
+      day: string;
+      mode: "flight" | "train";
+      number?: string;
+      from?: string;
+      to?: string;
+      /** "16:35 Sun 11 Oct", in the clock of that end, which `departs_clock` names. */
+      departs: string;
+      departs_clock: string;
+      arrives: string;
+      arrives_clock: string;
+    };
+
+/** The objects one reply carries: cards after the paragraph that names them,
+ *  and the days its words name, for the chip. Sent once, after the final
+ *  text; never sent empty. */
+export interface ObjectsFrame {
+  id: string;
+  paragraphs: { index: number; objects: ReplyObject[] }[];
+  days: { span: string; key: string; label: string }[];
+}
+
+export const OBJECTS_MAX_CARDS = 3;
+
+export type TurnFrame =
+  | { kind: "choices"; frame: ChoicesFrame }
+  | { kind: "act"; frame: ActFrame }
+  | { kind: "objects"; frame: ObjectsFrame };
 
 /** The rules a shared choices tool holds in code (stage 7). */
 export const CHOICES_MAX_OPTIONS = 4;
