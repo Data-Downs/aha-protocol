@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { Envelope, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
+import { Envelope, HANDED_CHANNELS, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
 
 const baseEnvelope = {
   id: "01HXYZ0000000000000000000A",
@@ -194,4 +194,12 @@ test("naming_request example from spec parses", () => {
   const parsed = Envelope.parse(namingRequest);
   assert.equal(parsed.intent, "naming_request");
   assert.equal(parsed.provenance.length, 3);
+});
+
+test("a handed witness names its channel from the fixed list and carries the human's note", () => {
+  const base = { statement: "The plumber is booked for Tuesday.", user_message: "Plumber: Tuesday 10am ok? / Me: yes", heard_by: "chrisonomous", heard_at: "2026-10-09T18:00:00Z" };
+  const parsed = WitnessContent.parse({ ...base, handed: { channel: "whatsapp", note: "sorted" } });
+  assert.deepEqual(parsed.handed, { channel: "whatsapp", note: "sorted" });
+  assert.throws(() => WitnessContent.parse({ ...base, handed: { channel: "telegram" } }));
+  assert.ok(HANDED_CHANNELS.includes("imessage"));
 });

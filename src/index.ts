@@ -3,6 +3,8 @@ export {
   Confidence,
   Domain,
   Envelope,
+  HANDED_CHANNELS,
+  HandedChannel,
   Intent,
   PROTOCOL_VERSION,
   Provenance,

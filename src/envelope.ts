@@ -112,12 +112,24 @@ export const ProposedTime = z.object({
 });
 export type ProposedTime = z.infer<typeof ProposedTime>;
 
+/** A channel the cohort cannot see, from which the human lifted an exchange
+ *  and handed it over (briefs/handed.md). The provenance source of such a
+ *  witness is `<human>:handed:<channel>`; the words are the correspondent's
+ *  as much as the human's, and the owner reads them fenced. */
+export const HandedChannel = z.enum(["whatsapp", "imessage", "signal", "sms", "voice", "other"]);
+export type HandedChannel = z.infer<typeof HandedChannel>;
+export const HANDED_CHANNELS = HandedChannel.options;
+
 export const WitnessContent = z.object({
   statement: z.string().min(1),
   user_message: z.string().min(1),
   heard_by: z.string().min(1),
   heard_at: z.string().datetime({ offset: true }),
   conversation_id: z.string().min(1).optional(),
+  /** Present when the word was handed from a channel the cohort cannot see:
+   *  `user_message` is then the exchange as lifted, and `note` the human's
+   *  own line about it, if any. */
+  handed: z.object({ channel: HandedChannel, note: z.string().min(1).optional() }).optional(),
   /** Typed word for the day's owner, handled in code on receipt: times
    *  someone proposed, to hold; or the one the person chose, so the other
    *  holds are released. `who` names the other party, for the hold's title. */
