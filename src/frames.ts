@@ -174,7 +174,9 @@ export type ReplyObject =
  *  text; never sent empty. */
 export interface ObjectsFrame {
   id: string;
-  paragraphs: { index: number; objects: ReplyObject[] }[];
+  /** `starts` is the paragraph's opening words, which a client anchors by:
+   *  a streamed reply may hold earlier rounds' text, so the index is a hint. */
+  paragraphs: { index: number; starts: string; objects: ReplyObject[] }[];
   days: { span: string; key: string; label: string }[];
 }
 
