@@ -11,6 +11,11 @@ export {
   Scope,
   Tentativeness,
   WitnessContent,
+  WhenParts,
+  Resolved,
+  AppointmentWitness,
+  WeekdayName,
+  RelativeDay,
 } from "./envelope.ts";
 export {
   ALL_DOMAINS,

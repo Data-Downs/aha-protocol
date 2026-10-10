@@ -203,3 +203,21 @@ test("a handed witness names its channel from the fixed list and carries the hum
   assert.throws(() => WitnessContent.parse({ ...base, handed: { channel: "telegram" } }));
   assert.ok(HANDED_CHANNELS.includes("imessage"));
 });
+
+test("an appointment witness carries the parts as written and the resolution; an instant where the parts should be is refused", () => {
+  const base = { statement: "Call with Sarah on Tuesday at 10.", user_message: "I've got a call with Sarah at 10 on Tuesday", heard_by: "career", heard_at: "2026-10-13T08:00:00Z" };
+  const appointment = {
+    who: "Sarah",
+    what: "call",
+    status: "confirmed",
+    when: { as_written: "at 10 on Tuesday", weekday: "tuesday", hour: 10 },
+    resolved: { kind: "instant", start: "2026-10-13T09:00:00Z", end: "2026-10-13T10:00:00Z", grounds: "the next tuesday; 10:00 in Europe/London" },
+    heard_where: "Europe/London",
+  };
+  const parsed = WitnessContent.parse({ ...base, appointment });
+  assert.equal(parsed.appointment?.when.weekday, "tuesday");
+  assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, when: { as_written: "at 10 on Tuesday", start: "2026-10-13T09:00:00Z" } } }));
+  assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, status: "maybe" } }));
+  const day = WitnessContent.parse({ ...base, appointment: { ...appointment, resolved: { kind: "day", key: "2026-10-13", grounds: "no hour" } } });
+  assert.equal(day.appointment?.resolved.kind, "day");
+});

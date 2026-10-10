@@ -120,6 +120,51 @@ export const HandedChannel = z.enum(["whatsapp", "imessage", "signal", "sms", "v
 export type HandedChannel = z.infer<typeof HandedChannel>;
 export const HANDED_CHANNELS = HandedChannel.options;
 
+/** A time as the words carried it (briefs/booked.md decision 1): the model
+ *  names only what was said and never a date it computed; aha-time's
+ *  resolveWhen turns the parts into an instant, a day, or nothing. Strict,
+ *  so an instant smuggled in where the parts should be is refused. */
+export const WeekdayName = z.enum(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]);
+export const RelativeDay = z.enum(["today", "tomorrow", "day_after_tomorrow", "next_week", "last_week"]);
+export const WhenParts = z
+  .object({
+    as_written: z.string().min(1),
+    weekday: WeekdayName.optional(),
+    day: z.number().int().min(1).max(31).optional(),
+    month: z.number().int().min(1).max(12).optional(),
+    year: z.number().int().min(2000).max(2200).optional(),
+    hour: z.number().int().min(0).max(23).optional(),
+    minute: z.number().int().min(0).max(59).optional(),
+    meridiem: z.enum(["am", "pm"]).optional(),
+    relative: RelativeDay.optional(),
+    zone_named: z.string().min(1).optional(),
+    duration_minutes: z.number().int().positive().optional(),
+  })
+  .strict();
+export type WhenParts = z.infer<typeof WhenParts>;
+
+/** What the parts resolved to, in code, at the moment of hearing. */
+export const Resolved = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("instant"), start: z.string().datetime({ offset: true }), end: z.string().datetime({ offset: true }), grounds: z.string() }),
+  z.object({ kind: z.literal("day"), key: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), grounds: z.string() }),
+  z.object({ kind: z.literal("none"), reason: z.string() }),
+]);
+export type Resolved = z.infer<typeof Resolved>;
+
+/** A meeting, call or visit with someone at a time, for the day's owner:
+ *  confirmed and resolved to an instant it is placed; proposed, or a day,
+ *  it is held; nothing, it is left alone. `heard_where` is the zone the
+ *  hearer resolved it in — the person's, at that moment. */
+export const AppointmentWitness = z.object({
+  who: z.string().min(1),
+  what: z.string().min(1).optional(),
+  status: z.enum(["confirmed", "proposed"]),
+  when: WhenParts,
+  resolved: Resolved,
+  heard_where: z.string().min(1),
+});
+export type AppointmentWitness = z.infer<typeof AppointmentWitness>;
+
 export const WitnessContent = z.object({
   statement: z.string().min(1),
   user_message: z.string().min(1),
@@ -135,5 +180,6 @@ export const WitnessContent = z.object({
    *  holds are released. `who` names the other party, for the hold's title. */
   proposed_times: z.object({ who: z.string().min(1), times: z.array(ProposedTime).min(1).max(8) }).optional(),
   chosen_time: z.object({ who: z.string().min(1), start: z.string().datetime({ offset: true }) }).optional(),
+  appointment: AppointmentWitness.optional(),
 });
 export type WitnessContent = z.infer<typeof WitnessContent>;
