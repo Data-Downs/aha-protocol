@@ -93,3 +93,9 @@ test("embodiment is deliberately co-owned", () => {
 test("will owns knowledge, and only knowledge", () => {
   assert.deepEqual(CHRIS_COHORT_REGISTRY.primary.will, ["knowledge"]);
 });
+
+test("an agent's name for the person: Tender for the mediator, the rest capitalised", async () => {
+  const { agentDisplayName } = await import("./registry.ts");
+  assert.equal(agentDisplayName("chrisonomous"), "Tender");
+  assert.equal(agentDisplayName("hearth"), "Hearth");
+});

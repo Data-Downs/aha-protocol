@@ -180,6 +180,19 @@ export type ReplyObject =
       day?: string;
       /** Whose it is, when it is not the person's own: "Charlotte", "Household". */
       whose?: string;
+    }
+  | {
+      /** What this turn passed to another agent (told once). */
+      kind: "handoff";
+      /** The recipient's wire name, and the name the person knows it by. */
+      to: string;
+      to_name: string;
+      /** The fact as it was passed. */
+      statement: string;
+      /** "00:24", in the person's clock. */
+      at: string;
+      /** passed, held until the person says yes, or not delivered. */
+      state: "passed" | "held" | "failed";
     };
 
 /** The objects one reply carries: cards after the paragraph that names them,

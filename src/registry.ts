@@ -61,3 +61,11 @@ export const CHRIS_COHORT_REGISTRY: CohortRegistry = buildRegistry([
   { name: "ruth", domains: ["financial_wellbeing"] },
   { name: "will", domains: ["knowledge"] },
 ]);
+
+/** The name a person knows an agent by. The mediator's wire name stays
+ *  chrisonomous; it is Tender to the person. Every other agent is its wire
+ *  name, capitalised. */
+export function agentDisplayName(wire: string): string {
+  if (wire === "chrisonomous" || wire === "mediator") return "Tender";
+  return wire.charAt(0).toUpperCase() + wire.slice(1);
+}
