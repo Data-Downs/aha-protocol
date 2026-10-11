@@ -195,6 +195,32 @@ export type ReplyObject =
       at: string;
       /** passed, held until the person says yes, or not delivered. */
       state: "passed" | "held" | "failed";
+    }
+  | {
+      /** A mail the turn read and the reply names. */
+      kind: "mail";
+      ref?: { table: string; id: string };
+      /** The subject, as it arrived. */
+      title: string;
+      /** The sender, by name where the mail gives one. */
+      from: string;
+      /** When it arrived, rendered in code: "08:12", or "Thu 8 Oct". */
+      at: string;
+      /** The mediator's one line on it, never the mail's body. */
+      gist: string;
+      link: string;
+      /** The inbox it came to, named only when there is more than one. */
+      account?: string;
+    }
+  | {
+      /** Tentative times held in the diary for one person, one card. */
+      kind: "hold";
+      /** "Hold: Jen", as the entry is titled. */
+      title: string;
+      /** The first held day, for the tap. */
+      day: string;
+      /** Each held time: its day, and its hours rendered in code. */
+      slots: { day: string; when: string }[];
     };
 
 /** The objects one reply carries: cards after the paragraph that names them,
