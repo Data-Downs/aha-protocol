@@ -178,6 +178,17 @@ export interface ObjectsFrame {
    *  a streamed reply may hold earlier rounds' text, so the index is a hint. */
   paragraphs: { index: number; starts: string; objects: ReplyObject[] }[];
   days: { span: string; key: string; label: string }[];
+  /** The act cards the turn put, kept with the reply so a draft outlives the
+   *  next message and a closed app (briefs/objects.md wave two). */
+  acts?: ActFrame[];
+}
+
+/** What the person changed on a draft before it is saved: its subject and
+ *  its body, nothing else. The recipient and the mail it answers are fixed in
+ *  code, and the act door refuses any other field. */
+export interface ActEdits {
+  subject?: string;
+  body?: string;
 }
 
 export const OBJECTS_MAX_CARDS = 3;
