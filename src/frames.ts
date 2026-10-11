@@ -184,6 +184,8 @@ export type ReplyObject =
   | {
       /** What this turn passed to another agent (told once). */
       kind: "handoff";
+      /** "Passed to Hearth", "Held for Hearth", "Not passed to Hearth" — rendered in code. */
+      title: string;
       /** The recipient's wire name, and the name the person knows it by. */
       to: string;
       to_name: string;
