@@ -167,6 +167,19 @@ export type ReplyObject =
       departs_clock: string;
       arrives: string;
       arrives_clock: string;
+    }
+  | {
+      /** A task the turn added or changed, from the owner's register. */
+      kind: "task";
+      ref?: { table: string; id: string };
+      title: string;
+      status: "open" | "done" | "dropped";
+      /** "Due Tue 13 Oct", "Done", rendered in code; absent when there is no date and nothing settled. */
+      when?: string;
+      /** The day a tap opens, when the task has one. */
+      day?: string;
+      /** Whose it is, when it is not the person's own: "Charlotte", "Household". */
+      whose?: string;
     };
 
 /** The objects one reply carries: cards after the paragraph that names them,
