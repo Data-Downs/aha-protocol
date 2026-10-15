@@ -76,7 +76,11 @@ export type ActBody =
   | { type: "text"; paragraphs: string[] }
   | { type: "clip"; title: string; domain: string; sentence: string; url: string; date?: string }
   | { type: "item"; name: string; price: string; merchant: string; reason: string; url: string }
-  | { type: "times"; who: string; times: { start: string; end: string }[] }
+  /** Proposed times. `slots` are the same times written out by the server
+   *  (the day, and the hours in both clocks while the person is away), so a
+   *  client never formats an instant itself; a client without them falls
+   *  back to the instants. */
+  | { type: "times"; who: string; times: { start: string; end: string }[]; slots?: { day: string; when: string }[] }
   | { type: "table"; columns: string[]; rows: string[][] }
   /** A bill, a renewal or a move between the person's own pots: the amount
    *  rendered, the day named (acting.md stage 4). */
