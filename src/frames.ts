@@ -276,3 +276,35 @@ export type TurnFrame =
 
 /** The rules a shared choices tool holds in code (stage 7). */
 export const CHOICES_MAX_OPTIONS = 4;
+
+/** A tool a turn runs, as the person sees it (aha-cohort/briefs/trail.md).
+ *  It rides the chat stream as the `tool` event when the tool starts: `name`
+ *  stays for an older client, `label` is the phrase its owner declared, with
+ *  a colleague's name or a web host as the only words filled in. Never
+ *  written by a model, never stored. */
+export interface ToolStepStart {
+  id: string;
+  name: string;
+  label: string;
+}
+
+/** The same step as the `tool_end` event, once its result is back: the done
+ *  or failed phrase, how long the work took in whole milliseconds, and
+ *  whether it worked. */
+export interface ToolStepEnd {
+  id: string;
+  label: string;
+  ms: number;
+  ok: boolean;
+}
+
+/** The rules a step holds on the wire, pure so every surface tests them at
+ *  source: an id, a filled label (no slot left in braces), and a duration
+ *  that is a whole number of at least 0. */
+export function stepShape(step: ToolStepStart | ToolStepEnd): string | null {
+  if (!step.id) return "a step carries an id";
+  if (!step.label.trim()) return "a step carries a label";
+  if (/[{}]/.test(step.label)) return "a label is filled: no braces";
+  if ("ms" in step && (!Number.isInteger(step.ms) || step.ms < 0)) return "ms is a whole number of at least 0";
+  return null;
+}
