@@ -225,6 +225,24 @@ export type ReplyObject =
       day: string;
       /** Each held time: its day, and its hours rendered in code. */
       slots: { day: string; when: string }[];
+    }
+  | {
+      /** A ticket the person holds, as the mediator's tickets route has it. */
+      kind: "ticket";
+      ref: { table: string; id: string };
+      /** The event, as the ticket names it. */
+      title: string;
+      venue?: string;
+      /** The entry, rendered in code on the person's clock; absent when it did not resolve. */
+      when?: string;
+      /** The entry's day, for the tap. */
+      day?: string;
+      order_ref?: string;
+      /** Whether the ticket's file is held, and whether a Wallet pass can be signed for it. */
+      file: boolean;
+      wallet: boolean;
+      /** The mail it came in, for a ticket with no file. */
+      link: string;
     };
 
 /** The objects one reply carries: cards after the paragraph that names them,
