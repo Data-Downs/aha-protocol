@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert";
-import { ACT_MAX_ACTIONS, actShape, CAPABILITY_LEVELS, type ActFrame } from "./frames.ts";
+import { ACT_MAX_ACTIONS, actShape, CAPABILITY_LEVELS, stepShape, type ActFrame, type ToolStepEnd, type ToolStepStart } from "./frames.ts";
 
 const base: ActFrame = {
   id: "a1",
@@ -36,4 +36,17 @@ test("an open action names its page and no act sends", () => {
 test("the level is one of three", () => {
   assert.deepEqual([...CAPABILITY_LEVELS], ["drafts", "tap", "own"]);
   assert.match(actShape({ ...base, level: "always" as never }) ?? "", /level/);
+});
+
+test("a step on the wire: a filled label, and a whole ms of at least 0", () => {
+  const start: ToolStepStart = { id: "toolu_1", name: "query_peer", label: "Asking Vincent" };
+  const end: ToolStepEnd = { id: "toolu_1", label: "Asked Vincent", ms: 1840, ok: true };
+  assert.equal(stepShape(start), null);
+  assert.equal(stepShape(end), null);
+  assert.equal(stepShape({ ...end, ms: 0, ok: false, label: "Couldn't reach Vincent" }), null);
+  assert.match(stepShape({ ...start, label: "Asking {peer}" }) ?? "", /no braces/);
+  assert.match(stepShape({ ...start, label: " " }) ?? "", /label/);
+  assert.match(stepShape({ ...start, id: "" }) ?? "", /id/);
+  assert.match(stepShape({ ...end, ms: 12.5 }) ?? "", /whole number/);
+  assert.match(stepShape({ ...end, ms: -1 }) ?? "", /whole number/);
 });
