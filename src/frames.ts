@@ -97,6 +97,24 @@ export type ActBody =
       currency: string;
       due: string;
       reference?: string;
+    }
+  /** An errand its owner proposes (aha-cohort/briefs/errands.md): where it
+   *  will go and what it will fill in, written in code from the directive.
+   *  Start opens the errand sheet in the app, and the person's turns happen
+   *  there; the step messages themselves are aha-errand's. */
+  | {
+      type: "errand";
+      errand_id: string;
+      /** form fills in and stops before sending; find only reads and searches. */
+      kind: "form" | "find";
+      purpose: string;
+      start: string;
+      /** The start's host, shown on the card. */
+      host: string;
+      /** Further registrable domains the errand may reach, written at the start. */
+      hosts: string[];
+      /** What it will fill in, as the form's own labels; empty for a find. */
+      fills: string[];
     };
 
 export interface ActAction {
@@ -149,6 +167,28 @@ export function actShape(frame: ActFrame): string | null {
     if (action.kind === "open" && !action.url) return `open action "${action.label}" names no page`;
     if (/\bsend\b/i.test(action.value) || /\bsend\b/i.test(action.label)) return "no act sends";
   }
+  return null;
+}
+
+export const ERRAND_MAX_FILLS = 12;
+
+/** The rules of an errand card: an https start whose host the card names, a
+ *  find that fills nothing, and a Start that is the only thing it does. */
+export function errandShape(frame: ActFrame): string | null {
+  if (frame.body.type !== "errand") return null;
+  const body = frame.body;
+  let start: URL;
+  try {
+    start = new URL(body.start);
+  } catch {
+    return "the errand's start is not an address";
+  }
+  if (start.protocol !== "https:") return "an errand starts on https";
+  if (start.hostname !== body.host) return "the card names a host the errand does not start on";
+  if (body.kind === "find" && body.fills.length > 0) return "a find fills nothing";
+  if (body.fills.length > ERRAND_MAX_FILLS) return `an errand names at most ${ERRAND_MAX_FILLS} fields`;
+  const does = frame.actions.filter((a) => a.kind === "do");
+  if (does.length !== 1 || does[0]!.value !== "start") return "an errand's one act is Start";
   return null;
 }
 
