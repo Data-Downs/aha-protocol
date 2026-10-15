@@ -162,6 +162,9 @@ export const AppointmentWitness = z.object({
   when: WhenParts,
   resolved: Resolved,
   heard_where: z.string().min(1),
+  /** Where it happens, as the ticket or the mail has it. An appointment with
+   *  a venue is never moved: another day is another entry. */
+  venue: z.string().min(1).optional(),
 });
 export type AppointmentWitness = z.infer<typeof AppointmentWitness>;
 

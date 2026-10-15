@@ -221,3 +221,18 @@ test("an appointment witness carries the parts as written and the resolution; an
   const day = WitnessContent.parse({ ...base, appointment: { ...appointment, resolved: { kind: "day", key: "2026-10-13", grounds: "no hour" } } });
   assert.equal(day.appointment?.resolved.kind, "day");
 });
+
+test("an appointment witness may carry a venue; an empty one is refused", () => {
+  const base = { statement: "Frieze London on Saturday at 13:30.", user_message: "See Tickets: your Frieze London ticket", heard_by: "chrisonomous", heard_at: "2026-10-15T08:00:00Z" };
+  const appointment = {
+    who: "Frieze London",
+    status: "confirmed",
+    when: { as_written: "Saturday 17 October 2026, 13:30", day: 17, month: 10, year: 2026, hour: 13, minute: 30 },
+    resolved: { kind: "instant", start: "2026-10-17T12:30:00Z", end: "2026-10-17T13:30:00Z", grounds: "13:30 in Europe/London" },
+    heard_where: "Europe/London",
+  };
+  assert.equal(WitnessContent.parse({ ...base, appointment }).appointment?.venue, undefined);
+  const placed = WitnessContent.parse({ ...base, appointment: { ...appointment, venue: "The Regent's Park, London NW1 4NR" } });
+  assert.equal(placed.appointment?.venue, "The Regent's Park, London NW1 4NR");
+  assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, venue: "" } }));
+});
