@@ -236,3 +236,10 @@ test("an appointment witness may carry a venue; an empty one is refused", () => 
   assert.equal(placed.appointment?.venue, "The Regent's Park, London NW1 4NR");
   assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, venue: "" } }));
 });
+
+test("an appointment witness may carry the mail's sender; an empty one is refused", () => {
+  const base = { heard_at: "2026-10-16T13:31:37.212Z", heard_by: "chrisonomous", statement: "Breakfast with Matthew Postgate.", user_message: "Matthew Postgate: Breakfast on Monday" };
+  const appointment = { who: "Matthew Postgate", status: "confirmed", when: { as_written: "Monday" }, resolved: { kind: "day", key: "2026-10-19", grounds: "g" }, heard_where: "Europe/London" };
+  assert.equal(WitnessContent.parse({ ...base, appointment: { ...appointment, sender: "M <m@example.com>" } }).appointment?.sender, "M <m@example.com>");
+  assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, sender: "" } }));
+});

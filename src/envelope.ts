@@ -165,6 +165,9 @@ export const AppointmentWitness = z.object({
   /** Where it happens, as the ticket or the mail has it. An appointment with
    *  a venue is never moved: another day is another entry. */
   venue: z.string().min(1).optional(),
+  /** Who wrote the mail it was read from, as its From line has it: the way
+   *  to reach them, carried by code, never by a model. */
+  sender: z.string().min(1).optional(),
 });
 export type AppointmentWitness = z.infer<typeof AppointmentWitness>;
 
