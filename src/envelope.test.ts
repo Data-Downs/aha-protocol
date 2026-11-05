@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { Envelope, HANDED_CHANNELS, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
+import { AppointmentWitness, Envelope, HANDED_CHANNELS, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
 
 const baseEnvelope = {
   id: "01HXYZ0000000000000000000A",
@@ -240,6 +240,8 @@ test("an appointment witness may carry a venue; an empty one is refused", () => 
 test("an appointment witness may carry the mail's sender; an empty one is refused", () => {
   const base = { heard_at: "2026-10-16T13:31:37.212Z", heard_by: "chrisonomous", statement: "Breakfast with Matthew Postgate.", user_message: "Matthew Postgate: Breakfast on Monday" };
   const appointment = { who: "Matthew Postgate", status: "confirmed", when: { as_written: "Monday" }, resolved: { kind: "day", key: "2026-10-19", grounds: "g" }, heard_where: "Europe/London" };
+  assert.equal(AppointmentWitness.safeParse({ ...appointment, status: "cancelled" }).success, true, "an appointment can be called off");
+  assert.equal(AppointmentWitness.safeParse({ ...appointment, status: "off" }).success, false);
   assert.equal(WitnessContent.parse({ ...base, appointment: { ...appointment, sender: "M <m@example.com>" } }).appointment?.sender, "M <m@example.com>");
   assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, sender: "" } }));
 });

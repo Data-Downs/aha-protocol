@@ -153,12 +153,14 @@ export type Resolved = z.infer<typeof Resolved>;
 
 /** A meeting, call or visit with someone at a time, for the day's owner:
  *  confirmed and resolved to an instant it is placed; proposed, or a day,
- *  it is held; nothing, it is left alone. `heard_where` is the zone the
- *  hearer resolved it in — the person's, at that moment. */
+ *  it is held; cancelled, what was placed or held for that time is let go
+ *  (without the word, "will not go ahead" reached Alex as a proposal and a
+ *  third hold, 2026-11-05); nothing, it is left alone. `heard_where` is the
+ *  zone the hearer resolved it in — the person's, at that moment. */
 export const AppointmentWitness = z.object({
   who: z.string().min(1),
   what: z.string().min(1).optional(),
-  status: z.enum(["confirmed", "proposed"]),
+  status: z.enum(["confirmed", "proposed", "cancelled"]),
   when: WhenParts,
   resolved: Resolved,
   heard_where: z.string().min(1),
