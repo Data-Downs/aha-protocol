@@ -14,6 +14,7 @@ export {
   WhenParts,
   Resolved,
   AppointmentWitness,
+  RepliedWitness,
   WeekdayName,
   RelativeDay,
 } from "./envelope.ts";
