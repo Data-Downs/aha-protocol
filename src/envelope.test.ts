@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { AppointmentWitness, Envelope, HANDED_CHANNELS, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
+import { AppointmentWitness, Envelope, RepliedWitness, HANDED_CHANNELS, Intent, Domain, PROTOCOL_VERSION, WitnessContent } from "./envelope.ts";
 
 const baseEnvelope = {
   id: "01HXYZ0000000000000000000A",
@@ -244,4 +244,14 @@ test("an appointment witness may carry the mail's sender; an empty one is refuse
   assert.equal(AppointmentWitness.safeParse({ ...appointment, status: "off" }).success, false);
   assert.equal(WitnessContent.parse({ ...base, appointment: { ...appointment, sender: "M <m@example.com>" } }).appointment?.sender, "M <m@example.com>");
   assert.throws(() => WitnessContent.parse({ ...base, appointment: { ...appointment, sender: "" } }));
+});
+
+test("a replied witness names the asking mail, the reply, the thread and the time, and nothing of what was said", () => {
+  const base = { statement: "Chris replied to Alex Duff.", user_message: "Re: Chris Downs Contract", heard_by: "chrisonomous", heard_at: "2026-11-04T16:40:00Z" };
+  const replied = { gmail_message_id: "1a1a76086aee7845", reply_message_id: "1a1a768fa616236c", thread_id: "1a1a76086aee7845", replied_at: "2026-11-04T16:33:46+00:00" };
+  const parsed = WitnessContent.parse({ ...base, replied });
+  assert.deepEqual(parsed.replied, replied);
+  assert.throws(() => WitnessContent.parse({ ...base, replied: { ...replied, reply_message_id: "" } }));
+  assert.throws(() => WitnessContent.parse({ ...base, replied: { ...replied, replied_at: "Tuesday" } }));
+  assert.equal(Object.keys(RepliedWitness.shape).length, 4);
 });

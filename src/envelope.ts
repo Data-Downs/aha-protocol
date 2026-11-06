@@ -173,6 +173,19 @@ export const AppointmentWitness = z.object({
 });
 export type AppointmentWitness = z.infer<typeof AppointmentWitness>;
 
+/** The person's reply to a mail that asked them for one (list stage 0,
+ *  briefs/list.md): the asking message, the reply, their thread and when
+ *  it was sent. The mail reader sends it on seeing the reply; the list's
+ *  owner closes the task it raised, in code. What the reply says is never
+ *  read: a reply is the deed. */
+export const RepliedWitness = z.object({
+  gmail_message_id: z.string().min(1),
+  reply_message_id: z.string().min(1),
+  thread_id: z.string().min(1),
+  replied_at: z.string().datetime({ offset: true }),
+});
+export type RepliedWitness = z.infer<typeof RepliedWitness>;
+
 export const WitnessContent = z.object({
   statement: z.string().min(1),
   user_message: z.string().min(1),
@@ -189,5 +202,6 @@ export const WitnessContent = z.object({
   proposed_times: z.object({ who: z.string().min(1), times: z.array(ProposedTime).min(1).max(8) }).optional(),
   chosen_time: z.object({ who: z.string().min(1), start: z.string().datetime({ offset: true }) }).optional(),
   appointment: AppointmentWitness.optional(),
+  replied: RepliedWitness.optional(),
 });
 export type WitnessContent = z.infer<typeof WitnessContent>;
