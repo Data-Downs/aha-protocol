@@ -31,6 +31,7 @@ export const Domain = z.enum([
   "relational",
   "spiritual",
   "knowledge",
+  "education",
   "meta",
 ]);
 export type Domain = z.infer<typeof Domain>;
