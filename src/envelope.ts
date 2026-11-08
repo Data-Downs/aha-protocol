@@ -21,19 +21,11 @@ export const Intent = z.enum([
 ]);
 export type Intent = z.infer<typeof Intent>;
 
-export const Domain = z.enum([
-  "training",
-  "embodiment",
-  "business",
-  "personal_admin",
-  "financial_wellbeing",
-  "career",
-  "relational",
-  "spiritual",
-  "knowledge",
-  "education",
-  "meta",
-]);
+/** A domain is a slug. The protocol validates its shape and nothing more:
+ *  whose a domain is, and which exist, come from the cohort's directory
+ *  (aha-cohort/briefs/directory.md, decision 2), never from a list here. */
+export const DOMAIN_SLUG = /^[a-z][a-z_]{1,31}$/;
+export const Domain = z.string().regex(DOMAIN_SLUG, "a domain is a slug: lower-case letters and underscores, 2 to 32 characters");
 export type Domain = z.infer<typeof Domain>;
 
 export const Authority = z.enum(["primary", "derived", "relayed", "none"]);

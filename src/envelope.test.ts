@@ -109,20 +109,18 @@ test("unknown intent rejected", () => {
   assert.equal(result.success, false);
 });
 
-test("unknown domain rejected", () => {
-  const result = Domain.safeParse("physical");
-  assert.equal(result.success, false);
+test("a malformed domain is rejected: the protocol checks the slug's shape", () => {
+  assert.equal(Domain.safeParse("Education").success, false);
+  assert.equal(Domain.safeParse("e").success, false);
+  assert.equal(Domain.safeParse("has-hyphen").success, false);
+  assert.equal(Domain.safeParse("has space").success, false);
+  assert.equal(Domain.safeParse("x".repeat(33)).success, false);
 });
 
-test("v0.5 domain split: training, embodiment, personal_admin, financial_wellbeing accepted", () => {
-  assert.equal(Domain.safeParse("training").success, true);
-  assert.equal(Domain.safeParse("embodiment").success, true);
-  assert.equal(Domain.safeParse("personal_admin").success, true);
-  assert.equal(Domain.safeParse("financial_wellbeing").success, true);
-});
-
-test("v0.5 retires personal_financial", () => {
-  assert.equal(Domain.safeParse("personal_financial").success, false);
+test("a well-formed domain is accepted whether or not any cohort carries it: membership is the directory's business (v1.0)", () => {
+  for (const d of ["training", "embodiment", "personal_admin", "financial_wellbeing", "a_domain_nobody_has_declared", "personal_financial"]) {
+    assert.equal(Domain.safeParse(d).success, true, d);
+  }
 });
 
 test("counter_hypothesis intent accepted", () => {

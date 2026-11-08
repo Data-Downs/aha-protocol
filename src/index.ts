@@ -2,6 +2,7 @@ export {
   Authority,
   Confidence,
   Domain,
+  DOMAIN_SLUG,
   Envelope,
   HANDED_CHANNELS,
   HandedChannel,
@@ -19,7 +20,7 @@ export {
   RelativeDay,
 } from "./envelope.ts";
 export {
-  ALL_DOMAINS,
+  humanDomains,
   buildRegistry,
   CHRIS_COHORT_REGISTRY,
   type AgentDomains,

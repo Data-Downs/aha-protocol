@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Domain } from "./envelope.ts";
-import { ALL_DOMAINS, buildRegistry, CHRIS_COHORT_REGISTRY } from "./registry.ts";
+import { buildRegistry, CHRIS_COHORT_REGISTRY, humanDomains } from "./registry.ts";
 import { verifyEnvelope } from "./verify.ts";
 
 const envelope = (from: string, domain: string, authority = "primary") => ({
@@ -29,13 +29,15 @@ test("buildRegistry maps agents to owned domains", () => {
   assert.deepEqual(registry.primary.ruth, ["financial_wellbeing"]);
 });
 
-test("ALL_DOMAINS covers the Domain enum", () => {
-  assert.deepEqual([...ALL_DOMAINS].sort(), [...Domain.options].sort());
+test("the human's domains are the union of the agents' — the protocol holds no list of its own", () => {
+  const agents = Object.entries(CHRIS_COHORT_REGISTRY.primary).filter(([n]) => n !== "chris").map(([name, domains]) => ({ name, domains }));
+  assert.deepEqual([...CHRIS_COHORT_REGISTRY.primary.chris!].sort(), humanDomains(agents).sort());
+  for (const domain of CHRIS_COHORT_REGISTRY.primary.chris!) assert.ok(Domain.safeParse(domain).success, `'${domain}' is not a slug`);
 });
 
-test("every protocol domain has at least one owner", () => {
-  const owned = new Set(Object.values(CHRIS_COHORT_REGISTRY.primary).flat());
-  for (const domain of Domain.options) {
+test("every domain in the table has at least one owner besides the human", () => {
+  const owned = new Set(Object.entries(CHRIS_COHORT_REGISTRY.primary).filter(([n]) => n !== "chris").flatMap(([, d]) => d));
+  for (const domain of CHRIS_COHORT_REGISTRY.primary.chris!) {
     assert.ok(owned.has(domain), `no agent owns '${domain}'`);
   }
 });
@@ -70,7 +72,7 @@ test("non-primary authority is unbound by domain ownership", async () => {
 });
 
 test("the human holds primacy everywhere", async () => {
-  for (const domain of Domain.options) {
+  for (const domain of CHRIS_COHORT_REGISTRY.primary.chris!) {
     const verdict = await verifyEnvelope(envelope("chris", domain), {
       registry: CHRIS_COHORT_REGISTRY,
     });

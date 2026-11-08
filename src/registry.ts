@@ -1,4 +1,4 @@
-import { Domain, type Envelope } from "./envelope.ts";
+import type { Envelope } from "./envelope.ts";
 import type { CohortRegistry } from "./verify.ts";
 
 /**
@@ -21,9 +21,6 @@ export type AgentDomains = {
   name: string;
   domains: readonly Envelope["domain"][];
 };
-
-/** Every domain in the protocol, in enum order. */
-export const ALL_DOMAINS = Domain.options;
 
 /** Build a registry from a list of agents and the domains each owns. Use
  *  this when the cohort is resolved at runtime from a directory. */
@@ -50,8 +47,7 @@ export function buildRegistry(agents: readonly AgentDomains[]): CohortRegistry {
  * §Participants). Chris's typed input is logged as an envelope from `chris`,
  * and the referee must never flag the one participant who can mint meaning.
  */
-export const CHRIS_COHORT_REGISTRY: CohortRegistry = buildRegistry([
-  { name: "chris", domains: ALL_DOMAINS },
+const CHRIS_AGENTS: AgentDomains[] = [
   { name: "chrisonomous", domains: ["relational", "spiritual", "embodiment", "meta"] },
   { name: "mediator", domains: ["relational", "spiritual", "embodiment", "meta"] },
   { name: "hearth", domains: ["career"] },
@@ -60,7 +56,14 @@ export const CHRIS_COHORT_REGISTRY: CohortRegistry = buildRegistry([
   { name: "alex", domains: ["personal_admin"] },
   { name: "ruth", domains: ["financial_wellbeing"] },
   { name: "will", domains: ["knowledge"] },
-]);
+];
+
+/** The human owns every domain the cohort's agents carry: "final on all
+ *  matters" is the union of the table, since the protocol no longer holds a
+ *  list of domains of its own. */
+export const humanDomains = (agents: readonly AgentDomains[]): Envelope["domain"][] => [...new Set(agents.flatMap((a) => a.domains))];
+
+export const CHRIS_COHORT_REGISTRY: CohortRegistry = buildRegistry([{ name: "chris", domains: humanDomains(CHRIS_AGENTS) }, ...CHRIS_AGENTS]);
 
 /** The name a person knows an agent by. The mediator's wire name stays
  *  chrisonomous; it is Tender to the person. Every other agent is its wire
