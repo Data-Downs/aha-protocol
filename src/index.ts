@@ -22,7 +22,6 @@ export {
 export {
   humanDomains,
   buildRegistry,
-  CHRIS_COHORT_REGISTRY,
   type AgentDomains,
   agentDisplayName,
 } from "./registry.ts";

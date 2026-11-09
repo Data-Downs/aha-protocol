@@ -1,7 +1,20 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Domain } from "./envelope.ts";
-import { buildRegistry, CHRIS_COHORT_REGISTRY, humanDomains } from "./registry.ts";
+import { buildRegistry, humanDomains, type AgentDomains } from "./registry.ts";
+
+// A cohort's table as a directory would build it: the kinds' rows, the
+// mediator under its role address too, the human owning the union.
+const AGENTS: AgentDomains[] = [
+  { name: "chrisonomous", domains: ["meta"] },
+  { name: "mediator", domains: ["meta"] },
+  { name: "hearth", domains: ["career"] },
+  { name: "matt", domains: ["training", "embodiment"] },
+  { name: "vincent", domains: ["business"] },
+  { name: "ruth", domains: ["financial_wellbeing"] },
+  { name: "will", domains: ["knowledge"] },
+];
+const REGISTRY = buildRegistry([{ name: "chris", domains: humanDomains(AGENTS) }, ...AGENTS]);
 import { verifyEnvelope } from "./verify.ts";
 
 const envelope = (from: string, domain: string, authority = "primary") => ({
@@ -30,23 +43,23 @@ test("buildRegistry maps agents to owned domains", () => {
 });
 
 test("the human's domains are the union of the agents' — the protocol holds no list of its own", () => {
-  const agents = Object.entries(CHRIS_COHORT_REGISTRY.primary).filter(([n]) => n !== "chris").map(([name, domains]) => ({ name, domains }));
-  assert.deepEqual([...CHRIS_COHORT_REGISTRY.primary.chris!].sort(), humanDomains(agents).sort());
-  for (const domain of CHRIS_COHORT_REGISTRY.primary.chris!) assert.ok(Domain.safeParse(domain).success, `'${domain}' is not a slug`);
+  const agents = Object.entries(REGISTRY.primary).filter(([n]) => n !== "chris").map(([name, domains]) => ({ name, domains }));
+  assert.deepEqual([...REGISTRY.primary.chris!].sort(), humanDomains(agents).sort());
+  for (const domain of REGISTRY.primary.chris!) assert.ok(Domain.safeParse(domain).success, `'${domain}' is not a slug`);
 });
 
 test("every domain in the table has at least one owner besides the human", () => {
-  const owned = new Set(Object.entries(CHRIS_COHORT_REGISTRY.primary).filter(([n]) => n !== "chris").flatMap(([, d]) => d));
-  for (const domain of CHRIS_COHORT_REGISTRY.primary.chris!) {
+  const owned = new Set(Object.entries(REGISTRY.primary).filter(([n]) => n !== "chris").flatMap(([, d]) => d));
+  for (const domain of REGISTRY.primary.chris!) {
     assert.ok(owned.has(domain), `no agent owns '${domain}'`);
   }
 });
 
 test("each agent may claim primary in its own domain", async () => {
-  for (const [agent, domains] of Object.entries(CHRIS_COHORT_REGISTRY.primary)) {
+  for (const [agent, domains] of Object.entries(REGISTRY.primary)) {
     for (const domain of domains) {
       const verdict = await verifyEnvelope(envelope(agent, domain), {
-        registry: CHRIS_COHORT_REGISTRY,
+        registry: REGISTRY,
       });
       assert.ok(verdict.ok, `${agent} rejected on its own domain '${domain}'`);
     }
@@ -55,7 +68,7 @@ test("each agent may claim primary in its own domain", async () => {
 
 test("an agent claiming primary outside its domain is flagged", async () => {
   const verdict = await verifyEnvelope(envelope("ruth", "business"), {
-    registry: CHRIS_COHORT_REGISTRY,
+    registry: REGISTRY,
   });
   assert.equal(verdict.ok, false);
   assert.ok(!verdict.ok && verdict.violations[0]?.code === "authority_not_owned");
@@ -65,16 +78,16 @@ test("non-primary authority is unbound by domain ownership", async () => {
   for (const authority of ["derived", "relayed", "none"]) {
     const verdict = await verifyEnvelope(
       envelope("ruth", "business", authority),
-      { registry: CHRIS_COHORT_REGISTRY },
+      { registry: REGISTRY },
     );
     assert.ok(verdict.ok, `'${authority}' should not be domain-bound`);
   }
 });
 
 test("the human holds primacy everywhere", async () => {
-  for (const domain of CHRIS_COHORT_REGISTRY.primary.chris!) {
+  for (const domain of REGISTRY.primary.chris!) {
     const verdict = await verifyEnvelope(envelope("chris", domain), {
-      registry: CHRIS_COHORT_REGISTRY,
+      registry: REGISTRY,
     });
     assert.ok(verdict.ok, `chris rejected on '${domain}'`);
   }
@@ -82,18 +95,9 @@ test("the human holds primacy everywhere", async () => {
 
 test("the mediator's role address carries the same ownership as its name", () => {
   assert.deepEqual(
-    CHRIS_COHORT_REGISTRY.primary.mediator,
-    CHRIS_COHORT_REGISTRY.primary.chrisonomous,
+    REGISTRY.primary.mediator,
+    REGISTRY.primary.chrisonomous,
   );
-});
-
-test("embodiment is deliberately co-owned", () => {
-  assert.ok(CHRIS_COHORT_REGISTRY.primary.matt?.includes("embodiment"));
-  assert.ok(CHRIS_COHORT_REGISTRY.primary.chrisonomous?.includes("embodiment"));
-});
-
-test("will owns knowledge, and only knowledge", () => {
-  assert.deepEqual(CHRIS_COHORT_REGISTRY.primary.will, ["knowledge"]);
 });
 
 test("an agent's name for the person: Tender for the mediator, the rest capitalised", async () => {
