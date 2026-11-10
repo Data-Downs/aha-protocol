@@ -1,0 +1,33 @@
+name: CI
+
+# A push to main is checked by a machine, not only by whoever pushed it
+# (aha-cohort Gate D2, finding F17 of 10 November 2026): a clean install from
+# the lockfile, the typecheck, the tests.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # persist-credentials: false — otherwise checkout writes this repo's
+      # token into the git config and it overrides the dependency token.
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
