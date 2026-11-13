@@ -13,7 +13,7 @@
   },
   "files": [
     "dist",
-    "v0.6.md"
+    "SPEC.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/rewrite-dts-extensions.mjs",

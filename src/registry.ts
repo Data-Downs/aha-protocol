@@ -6,7 +6,7 @@ import type { CohortRegistry } from "./verify.ts";
  *
  * The spec binds primacy to domain: a specialist is primary within its own
  * domain and "cannot claim authority for observations outside their domain"
- * (v0.6 §Participants). `derived`, `relayed` and `none` assert no primacy and
+ * (SPEC.md §Participants). `derived`, `relayed` and `none` assert no primacy and
  * are therefore unbound — an agent may always speak about another's domain,
  * it just may not speak *for* it.
  *
