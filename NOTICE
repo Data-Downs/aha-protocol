@@ -1,0 +1,14 @@
+AHA — Agent-Human-Agent Protocol
+Copyright 2026 Chris Downs
+
+The reference validator (the code in this repository) is licensed under the
+Apache License, Version 2.0. See LICENSE.
+
+The specification and the other documents (SPEC.md, README.md and everything
+in drafts/) are licensed under the Creative Commons Attribution 4.0
+International licence. See LICENSE-SPEC. Credit "AHA — Agent-Human-Agent
+Protocol, Chris Downs" and link to https://github.com/Data-Downs/aha-protocol.
+
+Neither licence grants any right to the names "AHA", "Agent-Human-Agent
+Protocol" or "Tend". An implementation may say that it speaks AHA; a changed
+or forked protocol must take another name.

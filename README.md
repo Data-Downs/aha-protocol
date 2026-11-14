@@ -70,8 +70,12 @@ npm test
 
 ## Status
 
-AHA runs in production for a small number of cohorts on one operator's infrastructure. It is a working draft: the envelope is stable, the federation semantics are deliberately unwritten, and the open questions in the spec are open. Earlier drafts (`v0.3.md` to `v0.5.md`) and a critique of the first are kept for history.
+AHA runs in production for a small number of cohorts on one operator's infrastructure. It is a working draft: the envelope is stable, the federation semantics are deliberately unwritten, and the open questions in the spec are open. Earlier drafts (0.3 to 0.5) and a critique of the first are kept for history in [`drafts/`](drafts/); they describe the protocol as it was, not as it is.
 
 ## Licence
 
-No licence has been chosen yet. Until one is added, all rights are reserved.
+- **The reference validator** (the code) is licensed under [Apache 2.0](LICENSE). Use it, change it and ship it, commercially or not; the licence includes a patent grant.
+- **The specification and documents** (`SPEC.md`, this file, and `drafts/`) are licensed under [Creative Commons Attribution 4.0](LICENSE-SPEC). Implement, quote and adapt them, with credit.
+- **The names** "AHA", "Agent-Human-Agent Protocol" and "Tend" are not licensed. An implementation may say it speaks AHA; a changed or forked protocol must take another name. See [NOTICE](NOTICE).
+
+Copyright 2026 Chris Downs.

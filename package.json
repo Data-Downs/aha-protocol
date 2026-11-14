@@ -13,7 +13,10 @@
   },
   "files": [
     "dist",
-    "SPEC.md"
+    "SPEC.md",
+    "LICENSE",
+    "LICENSE-SPEC",
+    "NOTICE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/rewrite-dts-extensions.mjs",
@@ -35,6 +38,6 @@
     "type": "git",
     "url": "git+https://github.com/Data-Downs/aha-protocol.git"
   },
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "private": true
 }
