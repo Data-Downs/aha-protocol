@@ -300,6 +300,8 @@ export type ReplyObject =
        *  by its period and subject in the portal's order, and where and when
        *  the reading came from, rendered in code. A tap opens the day. */
       kind: "lessons";
+      /** "Lessons", for a reader that lists cards by title. */
+      title: string;
       day: string;
       rows: { period?: string; subject: string }[];
       /** "From the school portal, read Sunday 15 November 2026 (today) at 20:59". */
