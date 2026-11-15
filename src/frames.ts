@@ -105,8 +105,9 @@ export type ActBody =
   | {
       type: "errand";
       errand_id: string;
-      /** form fills in and stops before sending; find only reads and searches. */
-      kind: "form" | "find";
+      /** form fills in and stops before sending; find only reads and searches;
+       *  read follows links and lifts items from the sections the person named. */
+      kind: "form" | "find" | "read";
       purpose: string;
       start: string;
       /** The start's host, shown on the card. */
@@ -115,6 +116,8 @@ export type ActBody =
       hosts: string[];
       /** What it will fill in, as the form's own labels; empty for a find. */
       fills: string[];
+      /** On a read: the sections the person named, the only ones read. */
+      sections?: string[];
     };
 
 export interface ActAction {
@@ -171,9 +174,11 @@ export function actShape(frame: ActFrame): string | null {
 }
 
 export const ERRAND_MAX_FILLS = 12;
+export const ERRAND_MAX_SECTIONS = 12;
 
 /** The rules of an errand card: an https start whose host the card names, a
- *  find that fills nothing, and a Start that is the only thing it does. */
+ *  find or a read that fills nothing, a read that names its sections and
+ *  stays on its own site, and a Start that is the only thing it does. */
 export function errandShape(frame: ActFrame): string | null {
   if (frame.body.type !== "errand") return null;
   const body = frame.body;
@@ -185,7 +190,12 @@ export function errandShape(frame: ActFrame): string | null {
   }
   if (start.protocol !== "https:") return "an errand starts on https";
   if (start.hostname !== body.host) return "the card names a host the errand does not start on";
-  if (body.kind === "find" && body.fills.length > 0) return "a find fills nothing";
+  if (body.kind !== "form" && body.fills.length > 0) return `a ${body.kind} fills nothing`;
+  if (body.kind === "read") {
+    if (!body.sections?.length) return "a read names its sections";
+    if (body.sections.length > ERRAND_MAX_SECTIONS) return `a read names at most ${ERRAND_MAX_SECTIONS} sections`;
+    if (body.hosts.length > 0) return "a read stays on its start's site";
+  } else if (body.sections) return "only a read names sections";
   if (body.fills.length > ERRAND_MAX_FILLS) return `an errand names at most ${ERRAND_MAX_FILLS} fields`;
   const does = frame.actions.filter((a) => a.kind === "do");
   if (does.length !== 1 || does[0]!.value !== "start") return "an errand's one act is Start";

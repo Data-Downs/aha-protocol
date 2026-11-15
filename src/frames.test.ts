@@ -84,3 +84,13 @@ test("an errand card starts on https at the host it names, and Start is its one 
   assert.match(errandShape({ ...errand, actions: [errand.actions[0]!, { label: "Go", value: "go", kind: "do" }] }) ?? "", /one act is Start/);
   assert.equal(errandShape(base), null);
 });
+
+test("an errand card admits a read and its sections", () => {
+  const body = errand.body as Extract<ActFrame["body"], { type: "errand" }>;
+  const read = { ...errand, body: { ...body, kind: "read" as const, fills: [], hosts: [], sections: ["Timetable", "Homework"] } };
+  assert.equal(errandShape(read), null);
+  assert.match(errandShape({ ...read, body: { ...read.body, sections: [] } }) ?? "", /names its sections/);
+  assert.match(errandShape({ ...read, body: { ...read.body, fills: ["Name"] } }) ?? "", /read fills nothing/);
+  assert.match(errandShape({ ...read, body: { ...read.body, hosts: ["nhs.uk"] } }) ?? "", /stays on its start's site/);
+  assert.match(errandShape({ ...errand, body: { ...body, sections: ["Homework"] } }) ?? "", /only a read names sections/);
+});
