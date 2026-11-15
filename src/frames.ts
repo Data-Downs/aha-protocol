@@ -293,6 +293,17 @@ export type ReplyObject =
       wallet: boolean;
       /** The mail it came in, for a ticket with no file. */
       link: string;
+    }
+  | {
+      /** One school day's lessons, as the owner's last read of the school's
+       *  portal kept them (aha-cohort/briefs/portal.md): the day, each lesson
+       *  by its period and subject in the portal's order, and where and when
+       *  the reading came from, rendered in code. A tap opens the day. */
+      kind: "lessons";
+      day: string;
+      rows: { period?: string; subject: string }[];
+      /** "From the school portal, read Sunday 15 November 2026 (today) at 20:59". */
+      source: string;
     };
 
 /** The objects one reply carries: cards after the paragraph that names them,
@@ -318,6 +329,8 @@ export interface ActEdits {
 }
 
 export const OBJECTS_MAX_CARDS = 3;
+/** A school week of day cards, counted apart from the other cards. */
+export const LESSONS_MAX_CARDS = 5;
 
 export type TurnFrame =
   | { kind: "choices"; frame: ChoicesFrame }
