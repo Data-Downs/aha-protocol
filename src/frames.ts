@@ -1,3 +1,4 @@
+import type { PeerFrame, SetupFrame, TriesFrame } from "./teaching.js";
 /**
  * Frames a door may put to the person inside a turn (aha-cohort/briefs/
  * polish.md stage 3, acting.md stage 1): choices, and an act. Each rides
@@ -337,7 +338,10 @@ export const LESSONS_MAX_CARDS = 5;
 export type TurnFrame =
   | { kind: "choices"; frame: ChoicesFrame }
   | { kind: "act"; frame: ActFrame }
-  | { kind: "objects"; frame: ObjectsFrame };
+  | { kind: "objects"; frame: ObjectsFrame }
+  | { kind: "tries"; frame: TriesFrame }
+  | { kind: "setup"; frame: SetupFrame }
+  | { kind: "peer"; frame: PeerFrame };
 
 /** The rules a shared choices tool holds in code (stage 7). */
 export const CHOICES_MAX_OPTIONS = 4;
