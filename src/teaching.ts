@@ -89,6 +89,8 @@ export interface TaughtRow {
   kind: TeachingEntry["kind"];
   shown_at: string;
   outcome: TaughtOutcome;
+  /** The words she saw (a chip, a setup's title, a colleague's name), for her own record in You. */
+  label?: string | null;
 }
 
 /** The record an agent's turn reads and writes: what this person has been
@@ -96,7 +98,7 @@ export interface TaughtRow {
 export interface TaughtStore {
   shown(): Promise<TaughtRow[]>;
   muted(): Promise<boolean>;
-  mark(entryId: string, kind: TeachingEntry["kind"], outcome: TaughtOutcome): Promise<void>;
+  mark(entryId: string, kind: TeachingEntry["kind"], outcome: TaughtOutcome, label?: string): Promise<void>;
 }
 
 /** What a turn needs to teach. Required on the shared loop; `false` declares
