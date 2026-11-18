@@ -60,15 +60,19 @@ export interface ChoicesFrame {
   level?: LevelOffer;
 }
 
-/** A reply drafted for the person: the recipient is fixed in code to the
- *  thread the mail came from, never the model's to choose. */
+/** A mail drafted for the person: the recipient is fixed in code to the
+ *  sender of a mail they received, never the model's to choose. A reply
+ *  carries the mail it answers; a new mail carries the mail whose sender it
+ *  is written to, and starts a thread of its own. */
 export interface DraftFrame {
   id: string;
   to: string;
   subject: string;
   body: string;
-  /** The mail this answers: the provider's thread id and message id. */
-  in_reply_to: { thread_id: string; message_id: string };
+  /** A reply: the mail it answers, the provider's thread id and message id. */
+  in_reply_to?: { thread_id: string; message_id: string };
+  /** A new mail: the mail whose sender it is addressed to, never threaded with it. */
+  addressed_from?: { message_id: string };
 }
 
 /** What an act shows, typed by kind so one card renders every act. */
