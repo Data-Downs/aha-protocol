@@ -4,6 +4,7 @@ export {
   Domain,
   DOMAIN_SLUG,
   Envelope,
+  EnvelopeMatter,
   HANDED_CHANNELS,
   HandedChannel,
   Intent,

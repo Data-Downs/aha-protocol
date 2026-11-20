@@ -55,6 +55,18 @@ export const Provenance = z
   );
 export type Provenance = z.infer<typeof Provenance>;
 
+/** The matter an envelope is about (briefs/undertakings.md): the mediator's
+ *  id for one real-world thing, and the names the human has confirmed for
+ *  it, so a receiver files what it hears under the same thing whatever the
+ *  sender called it. Strict: a matter carries no content of its own. */
+export const EnvelopeMatter = z
+  .object({
+    id: z.string().min(1),
+    names: z.array(z.string().min(1)).max(12).default([]),
+  })
+  .strict();
+export type EnvelopeMatter = z.infer<typeof EnvelopeMatter>;
+
 export const Envelope = z
   .object({
     id: z.string().min(1),
@@ -77,6 +89,7 @@ export const Envelope = z
     experiment_id: z.string().min(1).optional(),
     // Sender's protocol version; absence means a pre-0.6 sender.
     protocol: z.string().min(1).optional(),
+    matter: EnvelopeMatter.optional(),
     human_readable: z.string().min(1),
     content: z.unknown().optional(),
   })

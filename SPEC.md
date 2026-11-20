@@ -138,6 +138,7 @@ Field semantics:
 | `expires_at` | no | ISO 8601 instant with an offset, or `null`. A message without one never expires silently. |
 | `experiment_id` | no | Tags the message as belonging to an `experiment` scope (see "Message types"). |
 | `protocol` | no | The protocol version the sender emitted under (`"0.8"`). Lets a mixed-version cohort be reasoned about during migrations. |
+| `matter` | no | The matter the message is about: `{ id, names }`, the mediator's id for one real-world thing and up to twelve names the human has confirmed for it. A receiver files what it hears under that id whatever the sender called it. Carries no content of its own; any other key is refused. |
 | `human_readable` | yes | Natural-language summary. Required on every message. Sanitised for external scope. |
 | `content` | no | Structured payload; its schema varies by `intent`. |
 

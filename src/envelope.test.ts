@@ -253,3 +253,13 @@ test("a replied witness names the asking mail, the reply, the thread and the tim
   assert.throws(() => WitnessContent.parse({ ...base, replied: { ...replied, replied_at: "Tuesday" } }));
   assert.equal(Object.keys(RepliedWitness.shape).length, 4);
 });
+
+test("an envelope may name the matter it is about: an id and confirmed names, round-tripped, nothing else", () => {
+  const sent = { ...baseEnvelope, matter: { id: "m-1", names: ["The GDS contract", "Sanderson"] } };
+  const parsed = Envelope.parse(JSON.parse(JSON.stringify(Envelope.parse(sent))));
+  assert.deepEqual(parsed.matter, { id: "m-1", names: ["The GDS contract", "Sanderson"] });
+  assert.deepEqual(Envelope.parse({ ...baseEnvelope, matter: { id: "m-1" } }).matter, { id: "m-1", names: [] });
+  assert.equal(Envelope.parse(baseEnvelope).matter, undefined);
+  assert.equal(Envelope.safeParse({ ...baseEnvelope, matter: { id: "" } }).success, false);
+  assert.equal(Envelope.safeParse({ ...baseEnvelope, matter: { id: "m-1", note: "what he wrote" } }).success, false);
+});
