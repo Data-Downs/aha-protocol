@@ -263,3 +263,11 @@ test("an envelope may name the matter it is about: an id and confirmed names, ro
   assert.equal(Envelope.safeParse({ ...baseEnvelope, matter: { id: "" } }).success, false);
   assert.equal(Envelope.safeParse({ ...baseEnvelope, matter: { id: "m-1", note: "what he wrote" } }).success, false);
 });
+
+test("a witness may carry an aim for the mediator: the short name the human used, and nothing else", () => {
+  const base = { statement: "Working to get the GDS contract signed and running.", user_message: "I'm working to get a contract complete with GDS", heard_by: "hearth", heard_at: "2026-11-20T10:00:00Z" };
+  assert.deepEqual(WitnessContent.parse({ ...base, aim: { name: "the GDS contract" } }).aim, { name: "the GDS contract" });
+  assert.equal(WitnessContent.parse(base).aim, undefined);
+  assert.equal(WitnessContent.safeParse({ ...base, aim: { name: "" } }).success, false);
+  assert.equal(WitnessContent.safeParse({ ...base, aim: { name: "x", grade: "confirmed" } }).success, false);
+});

@@ -209,5 +209,10 @@ export const WitnessContent = z.object({
   chosen_time: z.object({ who: z.string().min(1), start: z.string().datetime({ offset: true }) }).optional(),
   appointment: AppointmentWitness.optional(),
   replied: RepliedWitness.optional(),
+  /** Typed word for the mediator (briefs/undertakings.md): the human said
+   *  they are working towards something that has an end. `statement` is the
+   *  aim as heard; `name` is the short name they used for it. A signal, never
+   *  a record: only the human's own yes makes it an undertaking. */
+  aim: z.object({ name: z.string().min(1).max(80) }).strict().optional(),
 });
 export type WitnessContent = z.infer<typeof WitnessContent>;
