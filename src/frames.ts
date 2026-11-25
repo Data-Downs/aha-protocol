@@ -79,6 +79,10 @@ export interface DraftFrame {
 export type ActBody =
   | ({ type: "draft" } & Omit<DraftFrame, "id">)
   | { type: "text"; paragraphs: string[] }
+  /** Words drafted for the person to send themselves, by text or any other
+   *  channel no agent has (attending.md stage E). The card holds only the
+   *  words; Copy puts exactly them on the clipboard. */
+  | { type: "message"; to: string; paragraphs: string[] }
   | { type: "clip"; title: string; domain: string; sentence: string; url: string; date?: string }
   | { type: "item"; name: string; price: string; merchant: string; reason: string; url: string }
   /** Proposed times. `slots` are the same times written out by the server
@@ -130,8 +134,9 @@ export interface ActAction {
   /** Posted to /v1/act as the action taken. */
   value: string;
   /** do: the agent acts through its hook; open: a page the person opens
-   *  themselves; discard: the card goes and nothing runs. */
-  kind: "do" | "open" | "discard";
+   *  themselves; copy: the card's words go to the person's clipboard, on the
+   *  device, and nothing is posted; discard: the card goes and nothing runs. */
+  kind: "do" | "open" | "copy" | "discard";
   url?: string;
 }
 
@@ -167,7 +172,7 @@ export interface ActResult {
 export function actShape(frame: ActFrame): string | null {
   if (!CAPABILITY_LEVELS.includes(frame.level)) return "the level is not one of drafts, tap, own";
   if (frame.actions.length < 1 || frame.actions.length > ACT_MAX_ACTIONS) return `an act carries one to ${ACT_MAX_ACTIONS} actions`;
-  const rank = { discard: 0, open: 1, do: 2 };
+  const rank = { discard: 0, copy: 1, open: 1, do: 2 };
   for (let i = 1; i < frame.actions.length; i++) {
     if (rank[frame.actions[i]!.kind] < rank[frame.actions[i - 1]!.kind]) return "actions run from the most reversible";
   }
@@ -176,6 +181,29 @@ export function actShape(frame: ActFrame): string | null {
     if (/\bsend\b/i.test(action.value) || /\bsend\b/i.test(action.label)) return "no act sends";
   }
   return null;
+}
+
+export const MESSAGE_CAPABILITY = "message.draft";
+
+/** A message for the person to send themselves, as an act card. One action,
+ *  Copy; a later one may open the person's own messages app (an `open` with
+ *  an sms: address), and the shape already allows it. Null when there are no
+ *  words or nobody to send them to. */
+export function messageAct(input: { id: string; agent: string; agentName: string; to: string; text: string; channel?: string }): ActFrame | null {
+  const to = input.to.trim();
+  const paragraphs = input.text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  if (!to || paragraphs.length === 0) return null;
+  const channel = (input.channel ?? "text").trim().toLowerCase() || "text";
+  return {
+    id: input.id,
+    agent: input.agent,
+    capability: MESSAGE_CAPABILITY,
+    level: "drafts",
+    subject: `${channel.charAt(0).toUpperCase()}${channel.slice(1)} to ${to}`,
+    body: { type: "message", to, paragraphs },
+    provenance: `Drafted by ${input.agentName}, for you to send`,
+    actions: [{ label: "Copy", value: "copy", kind: "copy" }],
+  };
 }
 
 export const ERRAND_MAX_FILLS = 12;

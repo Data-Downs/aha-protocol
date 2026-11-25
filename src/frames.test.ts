@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert";
-import { ACT_MAX_ACTIONS, actShape, CAPABILITY_LEVELS, errandShape, stepShape, type ActFrame, type ToolStepEnd, type ToolStepStart } from "./frames.ts";
+import { ACT_MAX_ACTIONS, actShape, messageAct, CAPABILITY_LEVELS, errandShape, stepShape, type ActFrame, type ToolStepEnd, type ToolStepStart } from "./frames.ts";
 
 const base: ActFrame = {
   id: "a1",
@@ -93,4 +93,18 @@ test("an errand card admits a read and its sections", () => {
   assert.match(errandShape({ ...read, body: { ...read.body, fills: ["Name"] } }) ?? "", /read fills nothing/);
   assert.match(errandShape({ ...read, body: { ...read.body, hosts: ["nhs.uk"] } }) ?? "", /stays on its start's site/);
   assert.match(errandShape({ ...errand, body: { ...body, sections: ["Homework"] } }) ?? "", /only a read names sections/);
+});
+
+test("a message for the person to send is a card of its words alone, with Copy", () => {
+  const frame = messageAct({ id: "message:t1:0", agent: "chrisonomous", agentName: "Tender", to: "Sam", text: "Hi Sam, could you ring Priya?\n\nThanks x" });
+  assert.ok(frame);
+  assert.equal(actShape(frame), null);
+  assert.deepEqual(frame.body, { type: "message", to: "Sam", paragraphs: ["Hi Sam, could you ring Priya?", "Thanks x"] });
+  assert.equal(frame.subject, "Text to Sam");
+  assert.deepEqual(frame.actions, [{ label: "Copy", value: "copy", kind: "copy" }]);
+  assert.equal(messageAct({ id: "x", agent: "a", agentName: "A", to: "Sam", text: "  " }), null);
+  assert.equal(messageAct({ id: "x", agent: "a", agentName: "A", to: "", text: "Hello" }), null);
+  // Opening the person's own messages app later fits beside Copy as it stands.
+  const later = { ...frame, actions: [...frame.actions, { label: "Open Messages", value: "open", kind: "open" as const, url: "sms:&body=Hi" }] };
+  assert.equal(actShape(later), null);
 });
