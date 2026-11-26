@@ -33,10 +33,15 @@ const PRONOUN_SETS: Record<string, Pronouns> = { "he/him": HE, "she/her": SHE, "
 /** The founder, as the prompts were written. */
 export const FOUNDER_HUMAN: Human = { id: "chris", name: "Chris", pronouns: HE };
 
-/** "she/her" → the set; unknown or absent → the founder's, so a prompt never
- *  renders a blank. */
+const BY_SUBJECT: Record<string, Pronouns> = { he: HE, she: SHE, they: THEY };
+
+/** "she/her" → the set, read by its first word, so "she", "She / Her" and
+ *  "she/they" are she. Absent, or a form this cannot render ("xe/xem"), is
+ *  they: a prompt never renders a blank, and nobody is called he because
+ *  their pronouns were not understood (until 26 November 2026 they were). */
 export function parsePronouns(spec: string | null | undefined): Pronouns {
-  return PRONOUN_SETS[(spec ?? "").trim().toLowerCase()] ?? HE;
+  const said = (spec ?? "").trim().toLowerCase();
+  return PRONOUN_SETS[said] ?? BY_SUBJECT[said.split("/")[0]!.trim()] ?? THEY;
 }
 
 function isFounder(human: Human): boolean {

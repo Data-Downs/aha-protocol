@@ -23,9 +23,14 @@ test("word boundaries leave other words alone", () => {
   assert.equal(humanise("the this christen shim", sarah), "the this christen shim");
 });
 
-test("unknown pronoun specs fall back to the founder's", () => {
-  assert.equal(parsePronouns("xe/xem").subject, "he");
-  assert.equal(parsePronouns(null).subject, "he");
+test("pronouns are read by their first word; an unknown or absent form is they, never he", () => {
+  assert.equal(parsePronouns("she").subject, "she");
+  assert.equal(parsePronouns(" She / Her ").subject, "she");
+  assert.equal(parsePronouns("she/they").subject, "she");
+  assert.equal(parsePronouns("he/him").subject, "he");
+  assert.equal(parsePronouns("xe/xem").subject, "they");
+  assert.equal(parsePronouns(null).subject, "they");
+  assert.equal(parsePronouns("").subject, "they");
 });
 
 test("a tool's descriptions render for the human; names and enums stay", () => {
