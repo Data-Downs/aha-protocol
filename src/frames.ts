@@ -277,6 +277,9 @@ export type ReplyObject =
       link: string;
       /** The inbox it came to, named only when there is more than one. */
       account?: string;
+      /** The Message-ID header it arrived with, where the reader kept it:
+       *  what a mail app other than Gmail opens it by. */
+      message_id?: string;
     }
   | {
       /** Tentative times held in the diary for one person, one card. */
